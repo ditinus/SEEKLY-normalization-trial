@@ -230,3 +230,11 @@ php artisan key:generate
 php artisan migrate
 php artisan test
 ```
+---
+
+## Design approach (for client review)
+
+SOLID principles, field-mapping strategy, feature rationale, and flow diagrams:
+
+**[docs/Technical-Approach.md](docs/Technical-Approach.md)**
+
