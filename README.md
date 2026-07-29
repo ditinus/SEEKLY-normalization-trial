@@ -1,4 +1,4 @@
-# SEEKLY Sandbox Connector Framework
+# SEEKLY Sandbox Connector Framework Trail Task
 
 Laravel 12 technical trial for Launch27-style CSV import into SEEKLY.
 
@@ -24,6 +24,8 @@ This repo contains the working import application. For design explanation (SOLID
 - MySQL
 
 ---
+
+
 
 ## Setup
 
@@ -51,6 +53,8 @@ php artisan migrate
 ```
 
 ---
+
+
 
 ## Project structure
 
@@ -83,7 +87,11 @@ docs/
 
 ---
 
+
+
 ## How to run
+
+
 
 ### Web UI
 
@@ -103,6 +111,8 @@ php artisan import:launch27 --mock --dry-run
 
 ---
 
+
+
 ## Import flow (short)
 
 ```
@@ -117,6 +127,8 @@ Source (CSV / Mock)
 
 ---
 
+
+
 ## Tests
 
 ```bash
@@ -127,9 +139,13 @@ Tests use SQLite in-memory (`phpunit.xml`). Local app DB remains MySQL via `.env
 
 ---
 
+
+
 ## Documentation
 
-| File | Purpose |
-|------|---------|
+
+| File                                                     | Purpose                                       |
+| -------------------------------------------------------- | --------------------------------------------- |
 | [docs/Technical-Approach.md](docs/Technical-Approach.md) | Design approach for client / technical review |
+
 
