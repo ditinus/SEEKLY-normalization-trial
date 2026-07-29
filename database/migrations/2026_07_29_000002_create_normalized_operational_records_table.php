@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('raw_connector_record_id')
                 ->unique()
                 ->constrained('raw_connector_records')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table->string('source_system', 64)->index();
             $table->string('source_booking_id', 191)->nullable()->index();
             $table->string('portfolio_id', 191)->nullable()->index();

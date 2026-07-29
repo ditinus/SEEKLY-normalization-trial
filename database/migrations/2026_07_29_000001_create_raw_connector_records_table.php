@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('raw_connector_records', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('source_system', 64)->index();
-            $table->string('natural_key', 191)->index();
+            $table->string('source_system', 32)->index();
+            $table->string('natural_key', 150)->index();
             $table->string('import_batch_id', 64)->index();
             $table->json('raw_payload');
             $table->string('processing_status', 32)->default('received');
             $table->timestamps();
 
-            $table->unique(['source_system', 'natural_key'], 'raw_records_source_key_unique');
+            $table->unique(['source_system', 'natural_key']);
         });
     }
 
