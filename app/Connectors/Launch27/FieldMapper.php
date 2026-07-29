@@ -29,7 +29,11 @@ final class FieldMapper
             connector: 'launch27',
             externalBookingId: $this->stringOrNull($row['id'] ?? null),
             customerReference: $this->stringOrNull($row['customer_id'] ?? null),
-            customerName: $this->maskCustomerName($row['customer_id'] ?? $row['id'] ?? '0'),
+            customerName: $this->maskCustomerName(
+                $this->stringOrNull($row['customer_id'] ?? null)
+                    ?? $this->stringOrNull($row['id'] ?? null)
+                    ?? '0'
+            ),
             serviceName: $this->stringOrNull($row['service_name'] ?? null),
             serviceCategory: $this->stringOrNull($row['service_category'] ?? null),
             serviceFrequency: $this->stringOrNull($row['frequency'] ?? null),
@@ -51,7 +55,7 @@ final class FieldMapper
         return match (true) {
             $cancelled => 'cancelled',
             $completed => 'completed',
-            default => strtolower((string) ($row['booking_status'] ?? 'unknown')),
+            default => strtolower(trim((string) ($row['booking_status'] ?? 'unknown'))),
         };
     }
 
@@ -83,7 +87,7 @@ final class FieldMapper
             return null;
         }
 
-        $cleaned = str_replace([',', '$'], '', (string) $value);
+        $cleaned = str_replace([',', '$', ' '], '', (string) $value);
 
         return is_numeric($cleaned) ? (float) $cleaned : null;
     }
@@ -94,12 +98,18 @@ final class FieldMapper
             return null;
         }
 
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        return filter_var(trim((string) $value), FILTER_VALIDATE_BOOLEAN);
     }
 
     private function stringOrNull(mixed $value): ?string
     {
-        return ($value === null || $value === '') ? null : (string) $value;
+        if ($value === null) {
+            return null;
+        }
+
+        $trimmed = trim((string) $value);
+
+        return $trimmed === '' ? null : $trimmed;
     }
 
     /**
