@@ -26,24 +26,23 @@ final class ImportController extends Controller
     ) {
     }
 
-    /**
-     * create
-     *
-     * @return View
-     */
     public function create(): View
     {
         return view('import.create');
     }
 
-    /**
-     * store
-     */
     public function store(ImportRequest $request): RedirectResponse
-    /**
-     * store
-     */
     {
+        $connector = $request->isMock()
+            ? new MockConnector($this->mapper, $this->validator)
+            : new CsvConnector((string) $request->file('file')?->getRealPath(), $this->mapper, $this->validator);
+
+        try {
+            $result = $this->importService->run($connector, $request->isDryRun());
+        } catch (Throwable $exception) {
+            return redirect()->route('import.create')->with('error', "Import failed: {$exception->getMessage()}");
+        }
+
         return redirect()->route('import.create')
             ->with('success', $request->isDryRun() ? 'Dry run completed.' : 'Import completed.')
             ->with('summary', $result->toSummary())
