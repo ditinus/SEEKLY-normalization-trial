@@ -9,9 +9,7 @@ use App\Connectors\ImportLogStatus;
 use DateTimeImmutable;
 
 /**
- * The outcome of one ImportService::run() call. Immutable by design so a
- * result can be handed to the console command, the ImportLog persister,
- * and the web UI without any of them being able to mutate it.
+ * ImportResult
  */
 final readonly class ImportResult
 {

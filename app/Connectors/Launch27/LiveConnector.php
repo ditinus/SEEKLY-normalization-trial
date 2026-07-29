@@ -10,11 +10,7 @@ use App\Connectors\DTO\NormalizedRecord;
 use RuntimeException;
 
 /**
- * Stage 3 placeholder for a real Launch27 API connector (OAuth, webhooks,
- * pagination, rate limiting). Implementing ConnectorInterface today proves
- * ImportService, DuplicateService and RawPayloadService will work with it
- * unchanged once it is built — only fetch() and its constructor collaborators
- * (an HTTP client, credentials) will need to be added.
+ * LiveConnector
  */
 final class LiveConnector implements ConnectorInterface
 {

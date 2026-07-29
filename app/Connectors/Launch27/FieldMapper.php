@@ -8,10 +8,7 @@ use App\Connectors\DTO\NormalizedRecord;
 use DateTimeImmutable;
 
 /**
- * Converts one raw Launch27 CSV row into the connector-agnostic
- * NormalizedRecord. Isolated from the connector itself so the mapping rules
- * can be unit-tested and reused (e.g. by a future Launch27 API connector)
- * without touching import orchestration.
+ * FieldMapper
  */
 final class FieldMapper
 {
@@ -113,9 +110,7 @@ final class FieldMapper
     }
 
     /**
-     * Customer PII (name, email, phone, address) is intentionally never
-     * carried into the normalized record; a stable pseudonym derived from
-     * the customer id is enough to demonstrate linkage without exposing it.
+     * maskCustomerName
      */
     private function maskCustomerName(string $seed): string
     {

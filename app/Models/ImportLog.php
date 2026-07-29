@@ -10,20 +10,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * One row per ImportService::run() call, giving an auditable history of
- * every import attempt and its received/mapped/imported/skipped/failed
- * counts, regardless of connector or dry-run status.
- *
- * @property string $id
- * @property string $connector
- * @property ConnectorMode $mode
- * @property string $batch_id
- * @property int $received_count
- * @property int $mapped_count
- * @property int $imported_count
- * @property int $skipped_count
- * @property int $failed_count
- * @property ImportLogStatus $status
+ * ImportLog
+
  */
 final class ImportLog extends Model
 {

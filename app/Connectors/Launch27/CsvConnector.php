@@ -10,10 +10,7 @@ use App\Connectors\DTO\NormalizedRecord;
 use RuntimeException;
 
 /**
- * Reads Launch27-style bookings from a CSV file. Contains only I/O and
- * delegates every business rule (mapping, validation) to its collaborators,
- * so this class stays a thin adapter between "file on disk" and "iterable
- * of raw rows".
+ * CsvConnector
  */
 final class CsvConnector implements ConnectorInterface
 {

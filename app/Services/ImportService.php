@@ -15,10 +15,7 @@ use Illuminate\Support\Str;
 use Throwable;
 
 /**
- * Orchestrates one import run: fetch -> map -> validate -> duplicate check
- * -> persist -> log. Every step besides orchestration is delegated to a
- * collaborator (the connector, DuplicateService, RawPayloadService) so this
- * class stays a coordinator rather than a place where business rules pile up.
+ * ImportService
  */
 final class ImportService
 {
@@ -32,6 +29,13 @@ final class ImportService
     ) {
     }
 
+    /**
+     * run
+     *
+     * @param ConnectorInterface $connector
+     * @param bool $dryRun
+     * @return ImportResult
+     */
     public function run(ConnectorInterface $connector, bool $dryRun = false): ImportResult
     {
         $startedAt = new DateTimeImmutable();
@@ -61,6 +65,11 @@ final class ImportService
     }
 
     /**
+     * processRows
+     *
+     * @param ConnectorInterface $connector
+     * @param string $batchId
+     * @param bool $dryRun
      * @return array{received: int, mapped: int, counts: array<string, int>, failedRows: ImportError[], skippedRows: ImportError[]}
      */
     private function processRows(ConnectorInterface $connector, string $batchId, bool $dryRun): array
@@ -103,6 +112,13 @@ final class ImportService
     }
 
     /**
+     * evaluate
+     *
+     * @param ConnectorInterface $connector
+     * @param array $raw
+     * @param NormalizedRecord $record
+     * @param string $batchId
+     * @param bool $dryRun
      * @param array<string, mixed> $raw
      * @param array<string, true> $seenInBatch
      * @return array{0: string, 1: ImportError|null}
@@ -137,6 +153,14 @@ final class ImportService
         return [self::OUTCOME_IMPORTED, null];
     }
 
+    /**
+     * persist
+     *
+     * @param string $connector
+     * @param array $raw
+     * @param NormalizedRecord $record
+     * @param string $batchId
+     */
     private function persist(string $connector, array $raw, NormalizedRecord $record, string $batchId): void
     {
         $rawImport = $this->rawPayloadService->store($connector, $raw, $record->externalBookingId, $batchId);

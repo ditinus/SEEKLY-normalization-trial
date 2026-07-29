@@ -8,15 +8,18 @@ use App\Models\RawImport;
 use JsonException;
 
 /**
- * The only class allowed to write RawImport rows. Keeping raw preservation
- * behind a single service guarantees every connector persists payloads the
- * same way (JSON, checksummed, batch-tagged) and that the payload is never
- * touched after it is stored.
+ * RawPayloadService
  */
 final class RawPayloadService
 {
     /**
-     * @param array<string, mixed> $payload
+     * store
+     *
+     * @param string $connector
+     * @param array $payload
+     * @param string|null $externalReference
+     * @param string $importBatchId
+     * @return RawImport
      */
     public function store(string $connector, array $payload, ?string $externalReference, string $importBatchId): RawImport
     {
@@ -30,7 +33,10 @@ final class RawPayloadService
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * checksum
+     *
+     * @param array $payload
+     * @return string
      */
     private function checksum(array $payload): string
     {

@@ -7,10 +7,7 @@ namespace App\Connectors\Launch27;
 use App\Connectors\DTO\NormalizedRecord;
 
 /**
- * Validates an already-mapped Launch27 record. Runs after mapping (not on
- * the raw row) so it checks the same normalized shape every future
- * connector will produce, keeping the required-field rules connector-aware
- * but source-format agnostic.
+ * Validator
  */
 final class Validator
 {

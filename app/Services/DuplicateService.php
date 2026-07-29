@@ -7,13 +7,17 @@ namespace App\Services;
 use App\Models\RawImport;
 
 /**
- * Detects duplicates by connector + external booking id against
- * previously stored raw imports. A row with no external id can never be
- * proven unique, so it is deliberately never flagged as a duplicate here —
- * validation is responsible for rejecting rows missing that field.
+ * DuplicateService
  */
 final class DuplicateService
 {
+    /**
+     * isDuplicate
+     *
+     * @param string $connector
+     * @param string|null $externalReference
+     * @return bool
+     */
     public function isDuplicate(string $connector, ?string $externalReference): bool
     {
         if ($externalReference === null) {

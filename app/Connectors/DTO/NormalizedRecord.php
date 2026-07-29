@@ -7,21 +7,13 @@ namespace App\Connectors\DTO;
 use DateTimeImmutable;
 
 /**
- * The connector-agnostic shape every connector maps its raw payload into.
- * Connectors only ever produce this DTO; persistence (Booking) and
- * validation both consume it, so neither has to know a source system's
- * native field names.
+ * NormalizedRecord
  */
 final readonly class NormalizedRecord
 {
     public function __construct(
         public string $connector,
         public ?string $externalBookingId,
-        /**
-         * The source system's opaque customer identifier (e.g. "cus_1001").
-         * Not personally identifiable on its own; used for traceability and
-         * required-field validation without exposing the customer's name.
-         */
         public ?string $customerReference,
         public ?string $customerName,
         public ?string $serviceName,
@@ -36,11 +28,6 @@ final readonly class NormalizedRecord
         public bool $isFuture,
         public ?float $amount,
         public ?string $currency,
-        /**
-         * The unparsed scheduled-date string as the source system sent it.
-         * Kept only so validation can tell "missing" apart from "present but
-         * unparseable" (e.g. "2026-13-45") — never persisted on the Booking.
-         */
         public ?string $scheduledDateRaw,
     ) {
     }
@@ -71,9 +58,7 @@ final readonly class NormalizedRecord
     }
 
     /**
-     * Attributes ready for Booking::create(), plus the full normalized
-     * payload preserved as JSON so nothing the mapper produced is lost even
-     * if it isn't promoted to its own column.
+     * toBookingAttributes
      *
      * @return array<string, mixed>
      */

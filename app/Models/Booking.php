@@ -9,9 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * A normalized, connector-agnostic operational record. Never written to
- * directly by a connector — only ImportService creates these, always
- * alongside the RawImport it was derived from.
+ * Booking
  *
  * @property string $id
  * @property string $raw_import_id

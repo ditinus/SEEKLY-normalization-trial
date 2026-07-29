@@ -9,11 +9,7 @@ use App\Connectors\Contracts\ConnectorInterface;
 use App\Connectors\DTO\NormalizedRecord;
 
 /**
- * Generates synthetic Launch27-shaped rows in memory. Lets the import
- * pipeline, console command and web UI all be exercised without a CSV
- * file, and proves ImportService is genuinely connector-agnostic: it is
- * built from the exact same FieldMapper/Validator as CsvConnector, only the
- * data source differs.
+ * MockConnector
  */
 final class MockConnector implements ConnectorInterface
 {

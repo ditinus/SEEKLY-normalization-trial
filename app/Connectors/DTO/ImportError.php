@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Connectors\DTO;
 
 /**
- * A single row's reason for not being imported, whether the row was
+ * ImportError
  * skipped (duplicate) or failed (validation).
  */
 final readonly class ImportError
