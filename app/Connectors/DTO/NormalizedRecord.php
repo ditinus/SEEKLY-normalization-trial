@@ -6,11 +6,6 @@ namespace App\Connectors\DTO;
 
 use DateTimeImmutable;
 
-/**
- * Connector-agnostic shape every connector maps its raw payload into.
- * Persistence (Booking) and validation both consume this DTO so neither
- * needs to know a source system's native field names.
- */
 final readonly class NormalizedRecord
 {
     public function __construct(
@@ -34,11 +29,6 @@ final readonly class NormalizedRecord
         public ?float $amount,
         public ?string $currency,
         public string $mapperVersion,
-        /**
-         * Unparsed scheduled-date string from the source. Used only so
-         * validation can distinguish "missing" from "present but
-         * unparseable" — never persisted as its own Booking column.
-         */
         public ?string $scheduledDateRaw,
     ) {
     }

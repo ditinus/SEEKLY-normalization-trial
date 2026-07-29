@@ -13,13 +13,11 @@ use App\Connectors\Launch27\Validator;
 use App\Models\Booking;
 use App\Models\ImportLog;
 use App\Models\RawImport;
-use App\Services\DuplicateService;
 use App\Services\ImportService;
-use App\Services\RawPayloadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-final class ImportPipelineTest extends TestCase
+class ImportPipelineTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -29,7 +27,7 @@ final class ImportPipelineTest extends TestCase
     {
         parent::setUp();
 
-        $this->importService = new ImportService(new RawPayloadService(), new DuplicateService());
+        $this->importService = app(ImportService::class);
     }
 
     public function test_dry_run_processes_rows_without_writing_to_the_database(): void
@@ -56,12 +54,12 @@ final class ImportPipelineTest extends TestCase
         $this->assertSame(2, Booking::count());
 
         $booking = Booking::query()->where('source_booking_id', '5001')->firstOrFail();
-        $rawImport = RawImport::query()->findOrFail($booking->raw_import_id);
+        $raw = RawImport::query()->findOrFail($booking->raw_import_id);
 
-        $this->assertSame('5001', $rawImport->external_reference);
-        $this->assertSame('5001', $rawImport->payload['id']);
-        $this->assertSame($rawImport->id, $booking->rawImport->id);
-        $this->assertNotEmpty($rawImport->checksum);
+        $this->assertSame('5001', $raw->external_reference);
+        $this->assertSame('5001', $raw->payload['id']);
+        $this->assertSame($raw->id, $booking->rawImport->id);
+        $this->assertNotEmpty($raw->checksum);
         $this->assertSame('cus_2001', $booking->customer_id);
         $this->assertSame(FieldMapper::MAPPER_VERSION, $booking->mapper_version);
         $this->assertSame('not_eligible', $booking->proof_eligibility);
@@ -105,10 +103,7 @@ final class ImportPipelineTest extends TestCase
 
     public function test_mock_connector_runs_through_the_same_pipeline_as_the_csv_connector(): void
     {
-        $mapper = new FieldMapper();
-        $validator = new Validator();
-        $connector = new MockConnector($mapper, $validator);
-
+        $connector = new MockConnector(new FieldMapper(), new Validator());
         $result = $this->importService->run($connector);
 
         $this->assertSame(ConnectorMode::Mock, $result->mode);

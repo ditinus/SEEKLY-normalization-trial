@@ -9,15 +9,12 @@ use App\Connectors\Contracts\ConnectorInterface;
 use App\Connectors\DTO\NormalizedRecord;
 use RuntimeException;
 
-/**
- * CsvConnector
- */
-final class CsvConnector implements ConnectorInterface
+class CsvConnector implements ConnectorInterface
 {
     public function __construct(
-        private readonly string $path,
-        private readonly FieldMapper $mapper,
-        private readonly Validator $validator,
+        private string $path,
+        private FieldMapper $mapper,
+        private Validator $validator,
     ) {
     }
 
@@ -33,7 +30,7 @@ final class CsvConnector implements ConnectorInterface
 
     public function fetch(): iterable
     {
-        if (!is_file($this->path)) {
+        if (! is_file($this->path)) {
             throw new RuntimeException("CSV file not found: {$this->path}");
         }
 
@@ -54,6 +51,7 @@ final class CsvConnector implements ConnectorInterface
                 }
 
                 $row = array_pad($row, count($headers), null);
+
                 yield array_combine($headers, array_slice($row, 0, count($headers)));
             }
         } finally {

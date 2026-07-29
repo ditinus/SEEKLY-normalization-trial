@@ -6,14 +6,10 @@ namespace App\Connectors\Launch27;
 
 use App\Connectors\DTO\NormalizedRecord;
 
-/**
- * Validates an already-mapped Launch27 record. Runs after mapping so it
- * checks the same normalized shape every future connector will produce.
- */
-final class Validator
+class Validator
 {
     /**
-     * @return string[] Empty array means the record is valid.
+     * @return string[]
      */
     public function validate(NormalizedRecord $record): array
     {

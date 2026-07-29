@@ -6,27 +6,17 @@ namespace App\Services;
 
 use App\Models\RawImport;
 
-/**
- * DuplicateService
- */
-final class DuplicateService
+class DuplicateService
 {
-    /**
-     * isDuplicate
-     *
-     * @param string $connector
-     * @param string|null $externalReference
-     * @return bool
-     */
-    public function isDuplicate(string $connector, ?string $externalReference): bool
+    public function isDuplicate(string $connector, ?string $bookingId): bool
     {
-        if ($externalReference === null) {
+        if ($bookingId === null) {
             return false;
         }
 
         return RawImport::query()
             ->where('connector', $connector)
-            ->where('external_reference', $externalReference)
+            ->where('external_reference', $bookingId)
             ->exists();
     }
 }

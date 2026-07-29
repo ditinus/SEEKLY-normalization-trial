@@ -8,14 +8,11 @@ use App\Connectors\ConnectorMode;
 use App\Connectors\Contracts\ConnectorInterface;
 use App\Connectors\DTO\NormalizedRecord;
 
-/**
- * MockConnector
- */
-final class MockConnector implements ConnectorInterface
+class MockConnector implements ConnectorInterface
 {
     public function __construct(
-        private readonly FieldMapper $mapper,
-        private readonly Validator $validator,
+        private FieldMapper $mapper,
+        private Validator $validator,
     ) {
     }
 
@@ -69,9 +66,8 @@ final class MockConnector implements ConnectorInterface
             'currency' => 'AUD',
         ];
 
+        // intentionally incomplete — used to exercise validation failures
         yield [
-            // No "id" and no "service_date": demonstrates validation
-            // catching missing required fields without stopping the batch.
             'id' => '',
             'customer_id' => 'cus_mock_3',
             'service_date' => '',

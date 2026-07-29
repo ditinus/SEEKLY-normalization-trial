@@ -9,14 +9,12 @@ use App\Connectors\Contracts\ConnectorInterface;
 use App\Connectors\DTO\NormalizedRecord;
 use RuntimeException;
 
-/**
- * LiveConnector
- */
-final class LiveConnector implements ConnectorInterface
+// Stage 3 placeholder — same interface as CSV/Mock, no live API yet
+class LiveConnector implements ConnectorInterface
 {
     public function __construct(
-        private readonly FieldMapper $mapper,
-        private readonly Validator $validator,
+        private FieldMapper $mapper,
+        private Validator $validator,
     ) {
     }
 
@@ -32,7 +30,7 @@ final class LiveConnector implements ConnectorInterface
 
     public function fetch(): iterable
     {
-        throw new RuntimeException('The live Launch27 connector is a Stage 3 placeholder and is not implemented yet.');
+        throw new RuntimeException('Live Launch27 connector is not implemented yet.');
     }
 
     public function map(array $raw): NormalizedRecord

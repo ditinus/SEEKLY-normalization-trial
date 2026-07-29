@@ -8,18 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * Normalized operational record. Only ImportService creates these, always
- * alongside the RawImport it was derived from.
- *
- * @property string $id
- * @property string $raw_import_id
- * @property string $connector
- * @property string|null $source_booking_id
- * @property string|null $customer_id
- * @property string|null $customer_name
- */
-final class Booking extends Model
+class Booking extends Model
 {
     use HasUuids;
 

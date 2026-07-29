@@ -10,19 +10,16 @@ use App\Connectors\Launch27\MockConnector;
 use App\Connectors\Launch27\Validator;
 use App\Http\Requests\ImportRequest;
 use App\Services\ImportService;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Throwable;
 
-/**
- * ImportController
- */
-final class ImportController extends Controller
+class ImportController extends Controller
 {
     public function __construct(
-        private readonly ImportService $importService,
-        private readonly FieldMapper $mapper,
-        private readonly Validator $validator,
+        private ImportService $importService,
+        private FieldMapper $mapper,
+        private Validator $validator,
     ) {
     }
 
@@ -35,18 +32,24 @@ final class ImportController extends Controller
     {
         $connector = $request->isMock()
             ? new MockConnector($this->mapper, $this->validator)
-            : new CsvConnector((string) $request->file('file')?->getRealPath(), $this->mapper, $this->validator);
+            : new CsvConnector(
+                (string) $request->file('file')?->getRealPath(),
+                $this->mapper,
+                $this->validator,
+            );
 
         try {
             $result = $this->importService->run($connector, $request->isDryRun());
-        } catch (Throwable $exception) {
-            return redirect()->route('import.create')->with('error', "Import failed: {$exception->getMessage()}");
+        } catch (Throwable $e) {
+            return redirect()
+                ->route('import.create')
+                ->with('error', 'Import failed: '.$e->getMessage());
         }
 
         return redirect()->route('import.create')
             ->with('success', $request->isDryRun() ? 'Dry run completed.' : 'Import completed.')
             ->with('summary', $result->toSummary())
-            ->with('failedRows', array_map(static fn ($row) => $row->toArray(), $result->failedRows))
-            ->with('skippedRows', array_map(static fn ($row) => $row->toArray(), $result->skippedRows));
+            ->with('failedRows', array_map(fn ($row) => $row->toArray(), $result->failedRows))
+            ->with('skippedRows', array_map(fn ($row) => $row->toArray(), $result->skippedRows));
     }
 }

@@ -6,26 +6,13 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * ImportRequest
- */
-final class ImportRequest extends FormRequest
+class ImportRequest extends FormRequest
 {
-    /**
-     * authorize
-     *
-     * @return bool
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * rules
-     *
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return [

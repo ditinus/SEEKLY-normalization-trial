@@ -9,11 +9,7 @@ use App\Connectors\ImportLogStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * ImportLog
-
- */
-final class ImportLog extends Model
+class ImportLog extends Model
 {
     use HasUuids;
 

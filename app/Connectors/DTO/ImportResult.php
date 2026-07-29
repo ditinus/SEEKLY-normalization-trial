@@ -8,9 +8,6 @@ use App\Connectors\ConnectorMode;
 use App\Connectors\ImportLogStatus;
 use DateTimeImmutable;
 
-/**
- * ImportResult
- */
 final readonly class ImportResult
 {
     /**
