@@ -67,7 +67,7 @@ app/
   knows about CSV files, HTTP, or persistence — they're reusable as-is by a
   future Launch27 API connector.
 - **Duplicate detection is two-layered.** `DuplicateService` checks
-  previously *persisted* `raw_imports` (connector + external booking id).
+  previously *persisted* `raw_imports` (connector + source booking id).
   `ImportService` additionally tracks ids seen earlier in the *current* run,
   so a dry run — which never writes to the database — still catches
   duplicate rows within the same file.
@@ -77,6 +77,30 @@ app/
 - **Every run produces exactly one `ImportLog`**, dry run or not, giving an
   audit trail of every import attempt with its received/mapped/imported/
   skipped/failed counts.
+
+### Normalized field alignment (trial vs production docs)
+
+This trial is intentionally smaller than SEEKLY's full Launch27 operational
+record. Field names that reviewers would expect from those docs are used
+where the trial already carries the same concept:
+
+**Included (aligned naming / cheap to derive):**
+- `source_booking_id`, `customer_id`, `service_name`, `service_category`,
+  `service_frequency`, `scheduled_at`
+- Presence flags: `has_checklist`, `has_time_tracking`, `has_notes`, `is_future`
+- `proof_eligibility` / `sla_eligibility` / `risk_eligibility`
+  (`eligible` | `not_eligible`) — **simplified stand-in only**. Proof is
+  eligible when the booking is completed and has a checklist; SLA and risk
+  are eligible when completed. This is not SEEKLY's production eligibility
+  classifier; it exists so the normalized shape shows the same signal types
+  the platform sells.
+- `mapper_version` (`FieldMapper::MAPPER_VERSION = 1.0-trial`) so remaps can
+  be detected later
+
+**Kept as trial-friendly names (not renamed 1:1):**
+- `status` (lifecycle projection) and `source_status` (raw Launch27 status)
+  instead of longer production labels
+- `customer_name` stores a masked demo label only — no raw PII
 
 ## Running the CSV import
 
@@ -118,17 +142,17 @@ dry-run behaviour, raw payload preservation + linkage, validation, duplicate
 detection (including within a single dry-run batch), the mock connector, and
 the upload UI.
 
-## What was deliberately left out of scope
+## Known limitations (trial scope)
 
-This is a trial, not the full Stage 2 framework:
+Deliberately out of scope for this proof-of-concept — not missing by accident:
 
-- `LiveConnector` is a placeholder that throws — proving the interface
-  supports it without building real API/OAuth integration.
-- No authentication/authorization on the `/import` route; a production
-  version would gate it behind the app's existing auth.
-- No queueing — imports run synchronously, which is fine for CSV files of
-  this size but would move to a queued job for larger/live sources.
-- Customer PII (name, email, phone, address) is never stored in the
-  normalized record, only a stable masked pseudonym and an opaque customer
-  reference — matching the synthetic, privacy-conscious nature of the sample
-  data.
+- Address / geo fields (no street, suburb, lat/lng promotion)
+- Team / vendor assignment fields
+- Checklist / time-entry / image / alert detail arrays (booleans only)
+- `source_booking_digest`, `portfolio_id`, and production lifecycle taxonomy
+- Full proof/evidence / SLA / risk classification — eligibility flags above
+  are placeholder rules only
+- `LiveConnector` throws — interface-ready, no real API/OAuth yet
+- No auth on `/import`; no queueing (imports run synchronously)
+- Customer PII (name, email, phone, address) is never stored on the
+  normalized record — only a masked label and opaque `customer_id`

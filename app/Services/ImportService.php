@@ -133,15 +133,15 @@ final class ImportService
     ): array {
         $errors = $connector->validate($record);
         if ($errors !== []) {
-            return [self::OUTCOME_FAILED, new ImportError($record->externalBookingId, implode('; ', $errors))];
+            return [self::OUTCOME_FAILED, new ImportError($record->sourceBookingId, implode('; ', $errors))];
         }
 
-        $batchKey = $connector->name() . '|' . $record->externalBookingId;
+        $batchKey = $connector->name() . '|' . $record->sourceBookingId;
         $isDuplicate = isset($seenInBatch[$batchKey])
-            || $this->duplicateService->isDuplicate($connector->name(), $record->externalBookingId);
+            || $this->duplicateService->isDuplicate($connector->name(), $record->sourceBookingId);
 
         if ($isDuplicate) {
-            return [self::OUTCOME_SKIPPED, new ImportError($record->externalBookingId, 'Duplicate of a previously imported record')];
+            return [self::OUTCOME_SKIPPED, new ImportError($record->sourceBookingId, 'Duplicate of a previously imported record')];
         }
 
         $seenInBatch[$batchKey] = true;
@@ -163,7 +163,7 @@ final class ImportService
      */
     private function persist(string $connector, array $raw, NormalizedRecord $record, string $batchId): void
     {
-        $rawImport = $this->rawPayloadService->store($connector, $raw, $record->externalBookingId, $batchId);
+        $rawImport = $this->rawPayloadService->store($connector, $raw, $record->sourceBookingId, $batchId);
 
         Booking::create([
             ...$record->toBookingAttributes(),

@@ -84,11 +84,11 @@ final class ImportLaunch27Command extends Command
         );
 
         foreach ($result->failedRows as $failure) {
-            $this->warn("Failed [{$failure->externalBookingId}]: {$failure->reason}");
+            $this->warn("Failed [{$failure->sourceBookingId}]: {$failure->reason}");
         }
 
         foreach ($result->skippedRows as $skipped) {
-            $this->line("Skipped [{$skipped->externalBookingId}]: {$skipped->reason}");
+            $this->line("Skipped [{$skipped->sourceBookingId}]: {$skipped->reason}");
         }
 
         $duration = $result->toSummary()['duration_ms'];

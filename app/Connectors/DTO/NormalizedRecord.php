@@ -7,14 +7,16 @@ namespace App\Connectors\DTO;
 use DateTimeImmutable;
 
 /**
- * NormalizedRecord
+ * Connector-agnostic shape every connector maps its raw payload into.
+ * Persistence (Booking) and validation both consume this DTO so neither
+ * needs to know a source system's native field names.
  */
 final readonly class NormalizedRecord
 {
     public function __construct(
         public string $connector,
-        public ?string $externalBookingId,
-        public ?string $customerReference,
+        public ?string $sourceBookingId,
+        public ?string $customerId,
         public ?string $customerName,
         public ?string $serviceName,
         public ?string $serviceCategory,
@@ -22,12 +24,21 @@ final readonly class NormalizedRecord
         public ?DateTimeImmutable $scheduledAt,
         public ?string $sourceStatus,
         public string $status,
+        public string $proofEligibility,
+        public string $slaEligibility,
+        public string $riskEligibility,
         public bool $hasChecklist,
         public bool $hasTimeTracking,
         public bool $hasNotes,
         public bool $isFuture,
         public ?float $amount,
         public ?string $currency,
+        public string $mapperVersion,
+        /**
+         * Unparsed scheduled-date string from the source. Used only so
+         * validation can distinguish "missing" from "present but
+         * unparseable" — never persisted as its own Booking column.
+         */
         public ?string $scheduledDateRaw,
     ) {
     }
@@ -39,8 +50,8 @@ final readonly class NormalizedRecord
     {
         return [
             'connector' => $this->connector,
-            'external_booking_id' => $this->externalBookingId,
-            'customer_reference' => $this->customerReference,
+            'source_booking_id' => $this->sourceBookingId,
+            'customer_id' => $this->customerId,
             'customer_name' => $this->customerName,
             'service_name' => $this->serviceName,
             'service_category' => $this->serviceCategory,
@@ -48,18 +59,20 @@ final readonly class NormalizedRecord
             'scheduled_at' => $this->scheduledAt?->format(DateTimeImmutable::ATOM),
             'source_status' => $this->sourceStatus,
             'status' => $this->status,
+            'proof_eligibility' => $this->proofEligibility,
+            'sla_eligibility' => $this->slaEligibility,
+            'risk_eligibility' => $this->riskEligibility,
             'has_checklist' => $this->hasChecklist,
             'has_time_tracking' => $this->hasTimeTracking,
             'has_notes' => $this->hasNotes,
             'is_future' => $this->isFuture,
             'amount' => $this->amount,
             'currency' => $this->currency,
+            'mapper_version' => $this->mapperVersion,
         ];
     }
 
     /**
-     * toBookingAttributes
-     *
      * @return array<string, mixed>
      */
     public function toBookingAttributes(): array

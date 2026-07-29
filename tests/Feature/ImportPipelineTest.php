@@ -55,13 +55,31 @@ final class ImportPipelineTest extends TestCase
         $this->assertSame(2, RawImport::count());
         $this->assertSame(2, Booking::count());
 
-        $booking = Booking::query()->where('external_booking_id', '5001')->firstOrFail();
+        $booking = Booking::query()->where('source_booking_id', '5001')->firstOrFail();
         $rawImport = RawImport::query()->findOrFail($booking->raw_import_id);
 
         $this->assertSame('5001', $rawImport->external_reference);
         $this->assertSame('5001', $rawImport->payload['id']);
         $this->assertSame($rawImport->id, $booking->rawImport->id);
         $this->assertNotEmpty($rawImport->checksum);
+        $this->assertSame('cus_2001', $booking->customer_id);
+        $this->assertSame(FieldMapper::MAPPER_VERSION, $booking->mapper_version);
+        $this->assertSame('not_eligible', $booking->proof_eligibility);
+        $this->assertSame('not_eligible', $booking->sla_eligibility);
+        $this->assertSame('not_eligible', $booking->risk_eligibility);
+    }
+
+    public function test_completed_booking_with_checklist_is_proof_eligible(): void
+    {
+        $this->importService->run($this->csvConnector());
+
+        $booking = Booking::query()->where('source_booking_id', '5002')->firstOrFail();
+
+        $this->assertSame('eligible', $booking->proof_eligibility);
+        $this->assertSame('eligible', $booking->sla_eligibility);
+        $this->assertSame('eligible', $booking->risk_eligibility);
+        $this->assertTrue($booking->has_checklist);
+        $this->assertTrue($booking->has_time_tracking);
     }
 
     public function test_validation_failures_are_reported_but_do_not_stop_the_import(): void

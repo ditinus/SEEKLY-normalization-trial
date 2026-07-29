@@ -94,7 +94,7 @@
                 <ul class="list-group list-group-flush">
                     @foreach (session('failedRows') as $row)
                         <li class="list-group-item">
-                            <strong>{{ $row['external_booking_id'] ?? '(no booking id)' }}</strong> &mdash; {{ $row['reason'] }}
+                            <strong>{{ $row['source_booking_id'] ?? '(no booking id)' }}</strong> &mdash; {{ $row['reason'] }}
                         </li>
                     @endforeach
                 </ul>
@@ -107,7 +107,7 @@
                 <ul class="list-group list-group-flush">
                     @foreach (session('skippedRows') as $row)
                         <li class="list-group-item">
-                            <strong>{{ $row['external_booking_id'] ?? '(no booking id)' }}</strong> &mdash; {{ $row['reason'] }}
+                            <strong>{{ $row['source_booking_id'] ?? '(no booking id)' }}</strong> &mdash; {{ $row['reason'] }}
                         </li>
                     @endforeach
                 </ul>

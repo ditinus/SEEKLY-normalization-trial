@@ -8,10 +8,14 @@ use App\Connectors\DTO\NormalizedRecord;
 use DateTimeImmutable;
 
 /**
- * FieldMapper
+ * Converts one raw Launch27 CSV row into NormalizedRecord. Isolated from
+ * the connector so mapping rules can be reused (e.g. by a future API
+ * connector) without touching import orchestration.
  */
 final class FieldMapper
 {
+    public const MAPPER_VERSION = '1.0-trial';
+
     public function map(array $row): NormalizedRecord
     {
         $completed = $this->toBool($row['completed'] ?? null) ?? false;
@@ -24,8 +28,8 @@ final class FieldMapper
 
         return new NormalizedRecord(
             connector: 'launch27',
-            externalBookingId: $this->stringOrNull($row['id'] ?? null),
-            customerReference: $this->stringOrNull($row['customer_id'] ?? null),
+            sourceBookingId: $this->stringOrNull($row['id'] ?? null),
+            customerId: $this->stringOrNull($row['customer_id'] ?? null),
             customerName: $this->maskCustomerName(
                 $this->stringOrNull($row['customer_id'] ?? null)
                     ?? $this->stringOrNull($row['id'] ?? null)
@@ -37,14 +41,23 @@ final class FieldMapper
             scheduledAt: $this->combineDateTime($row['service_date'] ?? null, $row['scheduled_time'] ?? null),
             sourceStatus: $this->stringOrNull($row['booking_status'] ?? null),
             status: $this->lifecycleStatus($row, $completed, $cancelled),
+            proofEligibility: $this->eligibility($completed && $hasChecklist),
+            slaEligibility: $this->eligibility($completed),
+            riskEligibility: $this->eligibility($completed),
             hasChecklist: $hasChecklist,
             hasTimeTracking: (int) ($row['time_tracked_minutes'] ?? 0) > 0,
             hasNotes: $hasNotes,
             isFuture: $this->isFutureDate($row['service_date'] ?? null),
             amount: $this->toAmount($row['total'] ?? null),
             currency: $this->stringOrNull($row['currency'] ?? null),
+            mapperVersion: self::MAPPER_VERSION,
             scheduledDateRaw: $scheduledDateRaw,
         );
+    }
+
+    private function eligibility(bool $eligible): string
+    {
+        return $eligible ? 'eligible' : 'not_eligible';
     }
 
     private function lifecycleStatus(array $row, bool $completed, bool $cancelled): string
@@ -110,7 +123,8 @@ final class FieldMapper
     }
 
     /**
-     * maskCustomerName
+     * Customer PII is never carried into the normalized record; a stable
+     * pseudonym derived from the customer id is enough for demo linkage.
      */
     private function maskCustomerName(string $seed): string
     {

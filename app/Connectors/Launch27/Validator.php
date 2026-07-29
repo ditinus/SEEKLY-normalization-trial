@@ -7,7 +7,8 @@ namespace App\Connectors\Launch27;
 use App\Connectors\DTO\NormalizedRecord;
 
 /**
- * Validator
+ * Validates an already-mapped Launch27 record. Runs after mapping so it
+ * checks the same normalized shape every future connector will produce.
  */
 final class Validator
 {
@@ -18,11 +19,11 @@ final class Validator
     {
         $errors = [];
 
-        if ($record->externalBookingId === null) {
+        if ($record->sourceBookingId === null) {
             $errors[] = 'Missing Booking ID';
         }
 
-        if ($record->customerReference === null) {
+        if ($record->customerId === null) {
             $errors[] = 'Missing Customer';
         }
 

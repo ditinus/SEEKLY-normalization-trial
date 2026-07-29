@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Booking
+ * Normalized operational record. Only ImportService creates these, always
+ * alongside the RawImport it was derived from.
  *
  * @property string $id
  * @property string $raw_import_id
  * @property string $connector
- * @property string|null $external_booking_id
- * @property string|null $customer_reference
+ * @property string|null $source_booking_id
+ * @property string|null $customer_id
  * @property string|null $customer_name
  */
 final class Booking extends Model
@@ -25,8 +26,8 @@ final class Booking extends Model
     protected $fillable = [
         'raw_import_id',
         'connector',
-        'external_booking_id',
-        'customer_reference',
+        'source_booking_id',
+        'customer_id',
         'customer_name',
         'service_name',
         'service_category',
@@ -34,12 +35,16 @@ final class Booking extends Model
         'scheduled_at',
         'source_status',
         'status',
+        'proof_eligibility',
+        'sla_eligibility',
+        'risk_eligibility',
         'has_checklist',
         'has_time_tracking',
         'has_notes',
         'is_future',
         'amount',
         'currency',
+        'mapper_version',
         'normalized_payload',
     ];
 
