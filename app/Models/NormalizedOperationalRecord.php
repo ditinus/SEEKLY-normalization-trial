@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class NormalizedOperationalRecord extends Model
 {
-    use HasUuids; 
+    use HasUuids;
 
     protected $fillable = [
         'raw_connector_record_id',

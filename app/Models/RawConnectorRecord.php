@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class RawConnectorRecord extends Model
 {
-    use HasUuids; 
+    use HasUuids;
+
     protected $fillable = [
         'source_system',
         'natural_key',

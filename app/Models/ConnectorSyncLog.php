@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class ConnectorSyncLog extends Model
 {
     use HasUuids;
+
     protected $fillable = [
         'sync_batch_id',
         'connector',
