@@ -1,0 +1,100 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Connectors\Launch27;
+
+use App\Connectors\ConnectorMode;
+use App\Connectors\Contracts\ConnectorInterface;
+use App\Connectors\DTO\NormalizedRecord;
+
+/**
+ * Generates synthetic Launch27-shaped rows in memory. Lets the import
+ * pipeline, console command and web UI all be exercised without a CSV
+ * file, and proves ImportService is genuinely connector-agnostic: it is
+ * built from the exact same FieldMapper/Validator as CsvConnector, only the
+ * data source differs.
+ */
+final class MockConnector implements ConnectorInterface
+{
+    public function __construct(
+        private readonly FieldMapper $mapper,
+        private readonly Validator $validator,
+    ) {
+    }
+
+    public function name(): string
+    {
+        return 'launch27';
+    }
+
+    public function mode(): ConnectorMode
+    {
+        return ConnectorMode::Mock;
+    }
+
+    public function fetch(): iterable
+    {
+        yield [
+            'id' => 'MOCK-1001',
+            'customer_id' => 'cus_mock_1',
+            'service_date' => now()->addDays(2)->toDateString(),
+            'scheduled_time' => '09:00',
+            'service_name' => 'Regular Cleaning',
+            'service_category' => 'residential_cleaning',
+            'frequency' => 'Weekly',
+            'booking_status' => 'scheduled',
+            'completed' => 'false',
+            'cancelled_at' => '',
+            'checklist_total' => '10',
+            'time_tracked_minutes' => '0',
+            'customer_notes' => 'Gate code is 4521.',
+            'staff_notes' => '',
+            'total' => '210.00',
+            'currency' => 'AUD',
+        ];
+
+        yield [
+            'id' => 'MOCK-1002',
+            'customer_id' => 'cus_mock_2',
+            'service_date' => now()->subDays(3)->toDateString(),
+            'scheduled_time' => '13:00',
+            'service_name' => 'Deep Clean',
+            'service_category' => 'residential_cleaning',
+            'frequency' => 'One-off',
+            'booking_status' => 'completed',
+            'completed' => 'true',
+            'cancelled_at' => '',
+            'checklist_total' => '18',
+            'time_tracked_minutes' => '145',
+            'customer_notes' => '',
+            'staff_notes' => 'Extra time on kitchen.',
+            'total' => '365.00',
+            'currency' => 'AUD',
+        ];
+
+        yield [
+            // No "id" and no "service_date": demonstrates validation
+            // catching missing required fields without stopping the batch.
+            'id' => '',
+            'customer_id' => 'cus_mock_3',
+            'service_date' => '',
+            'service_name' => 'Office Cleaning',
+            'service_category' => 'commercial_cleaning',
+            'booking_status' => 'unassigned',
+            'completed' => 'false',
+            'total' => '150.00',
+            'currency' => 'AUD',
+        ];
+    }
+
+    public function map(array $raw): NormalizedRecord
+    {
+        return $this->mapper->map($raw);
+    }
+
+    public function validate(NormalizedRecord $record): array
+    {
+        return $this->validator->validate($record);
+    }
+}

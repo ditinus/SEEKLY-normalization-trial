@@ -1,0 +1,6 @@
+id,customer_id,service_date,scheduled_time,service_name,service_category,frequency,booking_status,completed,cancelled_at,checklist_total,time_tracked_minutes,customer_notes,staff_notes,total,currency
+5001,cus_2001,2026-09-01,09:00,Regular Cleaning,residential_cleaning,Fortnightly,scheduled,false,,10,0,,,180.00,AUD
+5002,cus_2002,2026-09-02,10:00,Deep Clean,residential_cleaning,One-off,completed,true,,15,120,Please lock the gate.,,320.00,AUD
+,cus_2003,2026-09-03,11:00,Office Cleaning,commercial_cleaning,Weekly,scheduled,false,,0,0,,,150.00,AUD
+5004,cus_2004,,12:00,Office Cleaning,commercial_cleaning,Weekly,scheduled,false,,0,0,,,150.00,AUD
+5001,cus_2001,2026-09-01,09:00,Regular Cleaning,residential_cleaning,Fortnightly,scheduled,false,,10,0,,,180.00,AUD
